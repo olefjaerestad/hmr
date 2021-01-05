@@ -1,6 +1,0 @@
-{
-  "watch": [
-    "dist/classes/",
-    "dist/server/"
-  ]
-}

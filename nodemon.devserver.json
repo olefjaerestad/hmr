@@ -1,0 +1,7 @@
+{
+  "watch": [
+    "dist/classes/",
+    "dist/server/",
+    "scripts/dev-server.js"
+  ]
+}

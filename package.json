@@ -22,16 +22,16 @@
     "websockets"
   ],
   "license": "MIT",
-  "main": "build/server/index.js",
+  "main": "build/exports/server.js",
   "name": "hmr",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/olefjaerestad/hmr.git"
   },
   "scripts": {
-    "dev": "rm -rf dist && tsc && concurrently \"npm run dev:serve\" \"tsc -w\" \"npm run hmr:serve\"",
-    "dev:serve": "node scripts/dev-server.js",
-    "hmr:serve": "nodemon dist/server/server.js",
+    "dev": "rm -rf dist && tsc && concurrently \"tsc -w\" \"npm run hmr:serve\" \"npm run dev:serve\"",
+    "dev:serve": "nodemon --config nodemon.devserver.json --es-module-specifier-resolution=node scripts/dev-server.js",
+    "hmr:serve": "nodemon --config nodemon.hmrserver.json --es-module-specifier-resolution=node scripts/hmr-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",

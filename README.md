@@ -64,6 +64,7 @@ new Server({
   hostname: 'localhost', // Required.
   port: 9001, // Required.
   watch: { // Required.
+    ignoredFileExtensions // string[]. Optional. Example: ['.d.ts']
     path: [ // string or string[]. Required.
       join(fileURLToPath(import.meta.url), '../../dist'),
       join(fileURLToPath(import.meta.url), '../../../somefolder'),
@@ -76,8 +77,13 @@ new Server({
 #### Server._connectedSockets
 `{[id: number]: WebSocket}`
 
+#### Server._ignoredFileExtensions
+`string[]`
+
 #### Server._server
 `WebSocket.Server`
+
+[https://github.com/websockets/ws#simple-server](https://github.com/websockets/ws#simple-server)
 
 ### Client
 ```javascript

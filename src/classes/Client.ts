@@ -19,7 +19,9 @@ export class Client {
   _defaultOnMessageCallback(e: IFileChangedEvent) {
     console.log('Client._defaultOnMessageCallback()');
     console.log(e);
-    location.reload();
+
+    // TODO: Do better than just reload.
+    // location.reload();
   }
 
   constructor(options: IConstructorOptions) {

@@ -7,6 +7,7 @@ interface IConstructorOptions {
   hostname: 'localhost' | string;
   port: number;
   watch: {
+    ignoredFileExtensions?: string[];
     path: string | string[];
   }
 }
@@ -15,6 +16,7 @@ export class Server {
   _connectedSockets: {[id: number]: WebSocket} = {};
   // _doFireWatchEvent: boolean = true;
   _server: WebSocket.Server;
+  _ignoredFileExtensions: string[] = [];
 
   constructor(options: IConstructorOptions) {
     if (!options.port || !options.hostname) {
@@ -22,6 +24,8 @@ export class Server {
         `The Server constructor requires port (received ${options.port}) and hostname (received ${options.hostname})`
       );
     }
+
+    this._ignoredFileExtensions = options.watch.ignoredFileExtensions;
 
     this._server = new WebSocket.Server({
       port: options.port,
@@ -53,6 +57,12 @@ export class Server {
   handleFileChange(eventType: string, filename: string) {
     // if (this._doFireWatchEvent) {
       // this._doFireWatchEvent = false;
+      for (let i = 0; i < (this._ignoredFileExtensions || []).length; ++i) {
+        if (filename.endsWith(this._ignoredFileExtensions[i])) {
+          return;
+        }
+      }
+      
       const event: IFileChangedEvent = {
         filename,
         type: 'filechanged',
@@ -61,7 +71,7 @@ export class Server {
       for (const socketId in this._connectedSockets) {
         this._connectedSockets[socketId].send(JSON.stringify(event));
       }
-  
+      
       // Only register changes max once every 1000ms.
       // TODO: Do we want this check?
       // setTimeout(() => this._doFireWatchEvent = true, 1000);

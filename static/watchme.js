@@ -3,5 +3,6 @@
  * I am included in index.html and my only real purpose is to be watched by HMR.
  * When my contents are changed, HMR will notify connected browser clients.
  * Feel free to change my contents as much as you want.
+ * TODO: Why do i get saved twice when saving? Some VS Code thingy? Doesnt seem to happen to compiled files.
  */
 console.log(1);

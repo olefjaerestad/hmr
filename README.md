@@ -36,9 +36,10 @@ import { Client } from '@olefjaerestad/hmr/exports/client.js';
 new Client({
   hostname: 'localhost',
   port: 9001,
-  onMessageCallback: (e) => {
+  onMessageCallback: (e, client) => {
     console.log('Client.onMessageCallback()');
     console.log(e);
+    client.replaceNodeByFilename(e.filename);
   },
   onOpenCallback: (e) => console.log(e),
   onCloseCallback: (e) => console.log(e),
@@ -90,15 +91,17 @@ new Server({
 new Client({
   hostname: 'localhost', // Must match hostname of Server. Required.
   port: 9001, // Must match port of Server. Required.
-  onMessageCallback: (e) => { // Run callback on file changes. Optional. If not passed, fallbacks to a default (and hopefully reasonable) behaviour.
-    console.log('Client.onMessageCallback()');
-    console.log(e);
+  onMessageCallback: (e: IFileChangedEvent, client: Client) => { // Run callback on file changes. Optional. If not passed, fallbacks to a default (and hopefully reasonable) behaviour.
+    client.replaceNodeByFilename(e.filename); // client refers to the newly created instance.
   },
-  onOpenCallback: (e) => console.log(e), // Run callback on connection to Server. Optional.
-  onCloseCallback: (e) => console.log(e), // Run callback on disconnection from Server. Optional.
-  onErrorCallback: (e) => console.log(e), // Run callback on connection error. Optional.
+  onOpenCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection to Server. Optional.
+  onCloseCallback: (e: CloseEvent, client: Client) => console.log(e), // Run callback on disconnection from Server. Optional.
+  onErrorCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection error. Optional.
 });
 ```
+
+#### Client.replaceNodeByFilename(filename: string): number
+Replace script tags and CSS links matching filename. Returns number of replaced nodes.
 
 #### Client._socket
 `WebSocket`
@@ -122,6 +125,18 @@ notify({
   }
 });
 ```
+
+### Typescript
+#### IFileChangedEvent
+Event emitted when files are changed.
+
+```javascript
+interface IFileChangedEvent {
+  filename?: string;
+  type: 'filechanged' | 'serverrestart';
+}
+```
+
 
 ## Dev
 `npm i`

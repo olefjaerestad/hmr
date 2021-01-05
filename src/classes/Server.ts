@@ -14,7 +14,6 @@ interface IConstructorOptions {
 
 export class Server {
   _connectedSockets: {[id: number]: WebSocket} = {};
-  // _doFireWatchEvent: boolean = true;
   _server: WebSocket.Server;
   _ignoredFileExtensions: string[] = [];
 
@@ -55,27 +54,20 @@ export class Server {
   }
 
   handleFileChange(eventType: string, filename: string) {
-    // if (this._doFireWatchEvent) {
-      // this._doFireWatchEvent = false;
-      for (let i = 0; i < (this._ignoredFileExtensions || []).length; ++i) {
-        if (filename.endsWith(this._ignoredFileExtensions[i])) {
-          return;
-        }
+    for (let i = 0; i < (this._ignoredFileExtensions || []).length; ++i) {
+      if (filename.endsWith(this._ignoredFileExtensions[i])) {
+        return;
       }
-      
-      const event: IFileChangedEvent = {
-        filename,
-        type: 'filechanged',
-      }
-  
-      for (const socketId in this._connectedSockets) {
-        this._connectedSockets[socketId].send(JSON.stringify(event));
-      }
-      
-      // Only register changes max once every 1000ms.
-      // TODO: Do we want this check?
-      // setTimeout(() => this._doFireWatchEvent = true, 1000);
-    // }
+    }
+
+    const event: IFileChangedEvent = {
+      filename,
+      type: 'filechanged',
+    }
+
+    for (const socketId in this._connectedSockets) {
+      this._connectedSockets[socketId].send(JSON.stringify(event));
+    }
   }
 
   notifyConnectedClients(event: IFileChangedEvent) {
@@ -101,5 +93,4 @@ export class Server {
       watch(path, {recursive: true}, this.handleFileChange);
     }
   }
-  
 }

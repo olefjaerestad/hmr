@@ -9,7 +9,8 @@ new Server({
     path: [
       join(fileURLToPath(import.meta.url), '../../dist/classes'),
       join(fileURLToPath(import.meta.url), '../../dist/exports'),
-      join(fileURLToPath(import.meta.url), '../../dist/server-helpers'),
+      join(fileURLToPath(import.meta.url), '../../dist/client-utils'),
+      join(fileURLToPath(import.meta.url), '../../dist/server-utils'),
       join(fileURLToPath(import.meta.url), '../../static'),
     ],
     ignoredFileExtensions: ['.d.ts'],

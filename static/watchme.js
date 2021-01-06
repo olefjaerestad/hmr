@@ -5,4 +5,4 @@
  * Feel free to change my contents as much as you want.
  * TODO: Why do i get saved twice when saving? Some VS Code thingy? Doesnt seem to happen to compiled files.
  */
-console.log(1);
+console.log('watchme.js', 1);

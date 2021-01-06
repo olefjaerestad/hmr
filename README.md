@@ -1,6 +1,13 @@
 # hmr
 Hot Module Reloading server and client side scripts.
 
+HMR for:
+- CSS
+- Images
+
+Automatic full refresh for:
+- JS
+
 ## How to use
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:
 
@@ -39,7 +46,7 @@ new Client({
   onMessageCallback: (e, client) => {
     console.log('Client.onMessageCallback()');
     console.log(e);
-    client.replaceNodeByFilename(e.filename);
+    client.replaceNodesByFilename(e.filename);
   },
   onOpenCallback: (e) => console.log(e),
   onCloseCallback: (e) => console.log(e),
@@ -70,6 +77,7 @@ new Server({
       join(fileURLToPath(import.meta.url), '../../dist'),
       join(fileURLToPath(import.meta.url), '../../../somefolder'),
       join(fileURLToPath(import.meta.url), '/../anotherfolder'),
+      join(fileURLToPath(import.meta.url), './../yetanotherfolder/file.js'),
     ]
   }
 });
@@ -92,7 +100,7 @@ new Client({
   hostname: 'localhost', // Must match hostname of Server. Required.
   port: 9001, // Must match port of Server. Required.
   onMessageCallback: (e: IFileChangedEvent, client: Client) => { // Run callback on file changes. Optional. If not passed, fallbacks to a default (and hopefully reasonable) behaviour.
-    client.replaceNodeByFilename(e.filename); // client refers to the newly created instance.
+    client.replaceNodesByFilename(e.filename); // client refers to the newly created instance.
   },
   onOpenCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection to Server. Optional.
   onCloseCallback: (e: CloseEvent, client: Client) => console.log(e), // Run callback on disconnection from Server. Optional.
@@ -100,13 +108,15 @@ new Client({
 });
 ```
 
-#### Client.replaceNodeByFilename(filename: string): number
-Replace script tags and CSS links matching filename. Returns number of replaced nodes.
+#### Client.replaceNodesByFilename(filename: string): number
+Replace nodes which reference filename (e.g. CSS <link>s). Return number of replaced nodes. Does not replace script tags.
 
 #### Client._socket
 `WebSocket`
 
 #### Client._defaultOnMessageCallback: 
+Used on file changes if you don't pass an `onMessageCallback` to the Client constructor.
+
 `(e: IFileChangedEvent) => void`
 
 ### Functions
@@ -145,9 +155,8 @@ interface IFileChangedEvent {
 
 Open localhost:9000 in your browser.
 
-// TODO: Update the following section when Client._defaultOnMessageCallback is ready.
-Make a change to any file in `static`, `src/classes`, `src/exports` or `src/server-helpers` to refresh the browser window code.
-Make any change (e.g. add a space/newline) to scripts/dev-server.js to reload the browser window (due to a server restart).
+Make a change to any file in `static`, `src/classes`, `src/exports`, `src/client-utils` or `src/server-utils` to trigger HMR.
+Save (no need to make any change) scripts/dev-server.js to trigger HMR.
 
 A good starting point for getting to know the project is to have a look at the following files:
 - `src/exports/client.ts`
@@ -159,10 +168,11 @@ A good starting point for getting to know the project is to have a look at the f
 - `nodemon.*.json`
 
 ## Todo
-- nodemon: which scripts should restart when which files change?
 - Keep import paths in readme updated.
 - `npm run build`
 - `npm run publish`
 
+Done:
+- nodemon: which scripts should restart when which files change?
 ## Dont do:
 - When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.

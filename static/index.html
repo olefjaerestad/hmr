@@ -7,7 +7,6 @@
   <meta name="description" content="HMR dev" />
   <title>HMR dev</title>
   <script src="./hmr-client.js" type="module"></script>
-  <script src="./declaring-variable.js"></script>
   <script src="./watchme.js"></script>
   <link rel="stylesheet" href="./style.css">
 </head>
@@ -15,6 +14,13 @@
 <body>
   <h1>Hello!</h1>
   <p>This page is just for testing that HMR functionality works as expected.</p>
+  <img src="./placeholder.png?foo=bar" alt="I am a PNG">
+  <img src="./icon.svg" alt="I am an SVG">
+  <object data="./icon.svg" type="image/svg+xml">
+    I am fallback
+  </object>
+  <embed src="./icon.svg">
+  <iframe src="./icon.svg" frameborder="0"></iframe>
 </body>
 
 </html>

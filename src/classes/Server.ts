@@ -90,6 +90,7 @@ export class Server {
     
     for (let i = 0; i < paths.length; ++i) {
       const path = paths[i];
+      // `recursive` works only on OSX and Windows.
       watch(path, {recursive: true}, this.handleFileChange);
     }
   }

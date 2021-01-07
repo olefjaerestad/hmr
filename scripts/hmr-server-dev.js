@@ -14,6 +14,6 @@ new Server({
       join(fileURLToPath(import.meta.url), '../../dist'),
       join(fileURLToPath(import.meta.url), '../../static'),
     ],
-    ignoredFileExtensions: ['.d.ts'],
+    ignoredFileExtensions: ['.d.ts', '.tsbuildinfo'],
   }
 });

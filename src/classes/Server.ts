@@ -1,7 +1,8 @@
+import chokidar from 'chokidar';
 import WebSocket from 'ws';
-import { IFileChangedEvent } from "../types/types";
+import { IFileChangedEvent, TFsEventName } from "../types/types";
 import { IncomingMessage } from 'http';
-import { watch } from 'fs';
+import { Stats } from 'fs';
 
 interface IConstructorOptions {
   hostname: 'localhost' | string;
@@ -9,6 +10,7 @@ interface IConstructorOptions {
   watch: {
     ignoredFileExtensions?: string[];
     path: string | string[];
+    verbose?: boolean;
   }
 }
 
@@ -17,6 +19,7 @@ export class Server {
   _ignoredFileExtensions: string[] = [];
   _lastChangedFile: {filename?: string, timestamp?: number} = {};
   _server: WebSocket.Server;
+  _verbose: boolean;
 
   constructor(options: IConstructorOptions) {
     if (!options.port || !options.hostname) {
@@ -26,13 +29,14 @@ export class Server {
     }
 
     this._ignoredFileExtensions = options.watch.ignoredFileExtensions;
+    this._verbose = options.watch.verbose;
 
     this._server = new WebSocket.Server({
       port: options.port,
     });
 
     this._server.on('listening', () => {
-      console.log(`[HMR] Websocket server listening on ws://${options.hostname}:${this._server.options.port}`);
+      console.info(`[HMR] Websocket server listening on ws://${options.hostname}:${this._server.options.port}`);
     });
 
     this.handleFileChange = this.handleFileChange.bind(this);
@@ -54,10 +58,15 @@ export class Server {
     });
   }
 
-  handleFileChange(eventType: string, filename: string) {
+  
+  handleFileChange(eventName: TFsEventName, filepath: string, stats: Stats) {
+    const filename = filepath.split('/').reverse()[0];
+
     /**
      * Bugfix for fs.watch often triggering events twice.
-     * Ref https://stackoverflow.com/questions/12978924/fs-watch-fired-twice-when-i-change-the-watched-file 
+     * Ref: 
+     * https://stackoverflow.com/questions/12978924/fs-watch-fired-twice-when-i-change-the-watched-file
+     * https://github.com/paulmillr/chokidar/issues/610
      */
     if (filename === this._lastChangedFile.filename) {
       const now = Date.now();
@@ -74,7 +83,7 @@ export class Server {
 
     const event: IFileChangedEvent = {
       filename,
-      type: 'filechanged',
+      type: eventName,
     }
 
     this.notifyConnectedClients(event);
@@ -82,6 +91,15 @@ export class Server {
     this._lastChangedFile = {
       filename,
       timestamp: Date.now(),
+    }
+
+    if (this._verbose) {
+      console.info({
+        eventName,
+        filename,
+        filepath,
+        stats,
+      });
     }
   }
 
@@ -101,12 +119,9 @@ export class Server {
   }
 
   watchFiles(path: string | string[]) {
-    const paths = typeof path === 'string' ? [path] : path;
+    // const paths = typeof path === 'string' ? [path] : path;
     
-    for (let i = 0; i < paths.length; ++i) {
-      const path = paths[i];
-      // `recursive` works only on OSX and Windows.
-      watch(path, {recursive: true}, this.handleFileChange);
-    }
+    const watcher = chokidar.watch(path);
+    watcher.on('all', this.handleFileChange);
   }
 }

@@ -7,7 +7,8 @@ HMR for:
 - JS modules (`script[type="module"]`)
 
 Automatic full refresh for:
-- Non-module JS.
+- HTML
+- Non-module JS
 
 ## How to use
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:
@@ -30,7 +31,7 @@ new Server({
 });
 ```
 
-Run `node hmr-server.js`. This will start watching the given paths for file changes. A good idea would be to use something like [Concurrently](https://www.npmjs.com/package/concurrently) and run this script in parallel with your other dev script(s).
+Run `node hmr-server.js`. This will start watching the given paths recursively for file changes. The paths don't have to exist at the time the script starts running, which might be useful in some dev setups. A good idea would be to use something like [Concurrently](https://www.npmjs.com/package/concurrently) and run this script in parallel with your other dev script(s).
 
 > Note: This package is an ES module, and as such requires either setting `"type": "module"` in your package.json or using an .mjs extension `hmr-server.mjs`.
 
@@ -62,7 +63,9 @@ This will connect your browser to the HMR Server, and you'll be notified when an
 > Note, if you're making a separate file with this content, make sure to mark it as a module when including it in your html (`<script type="module">`).
 
 ## Requirements
-Browser and Node environments supporting ES modules.
+Browser and Node environments supporting the following: 
+- ES modules
+- Classes
 
 ## General idea
 - To be used while developing.
@@ -80,13 +83,14 @@ new Server({
   hostname: 'localhost', // Required.
   port: 9001, // Required.
   watch: { // Required.
-    ignoredFileExtensions // string[]. Optional. Example: ['.d.ts']
+    ignoredFileExtensions // string[]. Optional. Example: ['.d.ts', '.tsbuildinfo']
     path: [ // string or string[]. Required.
       join(fileURLToPath(import.meta.url), '../../dist'),
       join(fileURLToPath(import.meta.url), '../../../somefolder'),
       join(fileURLToPath(import.meta.url), '/../anotherfolder'),
       join(fileURLToPath(import.meta.url), './../yetanotherfolder/file.js'),
-    ]
+    ],
+    verbose: true, // Optional. Outputs file events to console. Useful for debugging. Default: false.
   }
 });
 ```
@@ -105,6 +109,9 @@ new Server({
 
 [https://github.com/websockets/ws#simple-server](https://github.com/websockets/ws#simple-server)
 
+#### Server._verbose
+`boolean`
+
 ### Client
 ```javascript
 new Client({
@@ -116,21 +123,25 @@ new Client({
   onOpenCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection to Server. Optional.
   onCloseCallback: (e: CloseEvent, client: Client) => console.log(e), // Run callback on disconnection from Server. Optional.
   onErrorCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection error. Optional.
+  verbose: true, // Optional. Outputs connection/file events to console. Useful for debugging. Default: false.
 });
 ```
-
-#### Client.replaceNodesByFilename(filename: string): number
-Replace nodes which reference filename (e.g. CSS <link>s). Return number of replaced nodes. Does not replace script tags.
-
-#### Client._socket
-`WebSocket`
 
 #### Client._defaultOnMessageCallback: 
 Used on file changes if you don't pass an `onMessageCallback` to the Client constructor.
 
 `(e: IFileChangedEvent) => void`
 
-### Functions
+#### Client._socket
+`WebSocket`
+
+#### Client._verbose
+`boolean`
+
+#### Client.replaceNodesByFilename(filename: string): number
+Replace nodes which reference filename (e.g. CSS <link>s). Return number of replaced nodes. Does not replace script tags that don't have `type=module`.
+
+### Utility functions
 
 #### notify
 Server side function you can use to manually notify all connected clients. This was originally created to allow web servers to notify clients whenever it restarted.

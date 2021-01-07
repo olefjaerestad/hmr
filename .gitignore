@@ -108,3 +108,6 @@ build
 
 # System files
 .DS_Store
+
+# Rollup cache
+.rollup.cache

@@ -16,7 +16,7 @@ type TDataType = 'css' | 'svg' | 'img' | 'js';
  * removed scripts will still be in memory.
  * Which in turn will lead to 'Cannot redeclare variable' errors.
  */
-export function replaceNodesByFilename(filename: string): void | number {
+export function replaceNodesByFilename(filename: string, verbose: boolean): void | number {
   if (!filename) {
     return;
   }
@@ -54,6 +54,10 @@ export function replaceNodesByFilename(filename: string): void | number {
 
     element.parentElement.replaceChild(newElement, element);
     ++replacedNodesCount;
+
+    if (verbose) {
+      console.info(`[HMR] Refreshed ${filename}`);
+    }
   });
 
   return replacedNodesCount;

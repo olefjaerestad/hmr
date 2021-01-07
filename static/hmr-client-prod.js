@@ -11,4 +11,4 @@ new Client({
   onOpenCallback: (e) => console.log(e),
   onCloseCallback: (e) => console.log(e),
   onErrorCallback: (e) => console.log(e),
-})
+});

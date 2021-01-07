@@ -13,7 +13,7 @@ app.use('/', express.static('static'));
 app.use('/dist', express.static('dist'));
 app.use('/build', express.static('build'));
 app.listen(port, () => {
-  console.log(`Dev server listening at localhost:${port}`);
+  console.info(`Dev server listening at localhost:${port}`);
   
   notify({
     hostname: 'localhost',

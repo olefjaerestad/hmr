@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@types/ws": "^7.4.0",
+    "chokidar": "^3.5.0",
     "ws": "^7.4.2"
   },
   "description": "Hot Module Reloading server and client side scripts.",
@@ -47,5 +48,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
-  "version": "0.0.2"
+  "version": "0.0.3"
 }

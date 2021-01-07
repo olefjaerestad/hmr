@@ -1,7 +1,9 @@
 {
   "watch": [
     "dist/classes/",
-    "dist/server/",
+    "dist/server-utils/",
+    "dist/types/",
+    "dist/server.js",
     "scripts/dev-server.js"
   ]
 }

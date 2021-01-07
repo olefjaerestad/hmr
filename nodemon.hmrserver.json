@@ -1,7 +1,9 @@
 {
   "watch": [
     "dist/classes/",
-    "dist/server/",
-    "scripts/hmr-server.js"
+    "dist/server-utils/",
+    "dist/types/",
+    "dist/server.js",
+    "scripts/hmr-server-dev.js"
   ]
 }

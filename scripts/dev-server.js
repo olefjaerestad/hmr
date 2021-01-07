@@ -4,13 +4,14 @@
  * Save this file and watch the browser window update.
  */
 import express from 'express';
-import { notify } from '../dist/exports/server';
+import { notify } from '../dist/server';
 
 const app = express();
 const port = 9000;
 
 app.use('/', express.static('static'));
 app.use('/dist', express.static('dist'));
+app.use('/build', express.static('build'));
 app.listen(port, () => {
   console.log(`Dev server listening at localhost:${port}`);
   

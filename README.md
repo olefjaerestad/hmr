@@ -13,7 +13,7 @@ Automatic full refresh for:
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:
 
 ```javascript
-import { Server } from '@olefjaerestad/hmr/exports/server';
+import { Server } from '@olefjaerestad/hmr/server.js';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -30,7 +30,7 @@ new Server({
 });
 ```
 
-Run `node hmr-server.js`. This will start watching the given paths for file changes.
+Run `node hmr-server.js`. This will start watching the given paths for file changes. A good idea would be to use something like [Concurrently](https://www.npmjs.com/package/concurrently) and run this script in parallel with your other dev script(s).
 
 Add the following somewhere in your client side code:
 
@@ -39,7 +39,7 @@ Add the following somewhere in your client side code:
  * Note: if not using a bundler or similar, the import path must point to node_modules, e.g.
  * '../node_modules/@olefjaerestad/hmr/exports/client.js'.
  */
-import { Client } from '@olefjaerestad/hmr/exports/client.js';
+import { Client } from '@olefjaerestad/hmr/client.js';
 
 new Client({
   hostname: 'localhost',
@@ -129,7 +129,7 @@ Used on file changes if you don't pass an `onMessageCallback` to the Client cons
 Server side function you can use to manually notify all connected clients. This was originally created to allow web servers to notify clients whenever it restarted.
 
 ```javascript
-import { notify } from '@olefjaerestad/hmr/exports/server';
+import { notify } from '@olefjaerestad/hmr/server.js';
 
 notify({
   hostname: 'localhost', // Must match hostname of Server. Required.
@@ -151,7 +151,6 @@ interface IFileChangedEvent {
 }
 ```
 
-
 ## Dev
 `npm i`
 
@@ -159,25 +158,38 @@ interface IFileChangedEvent {
 
 Open localhost:9000 in your browser.
 
-Make a change to any file in `static`, `src/classes`, `src/exports`, `src/client-utils` or `src/server-utils` to trigger HMR.
+Make a change to a file in `src` to trigger HMR.
+Save (no need to make any change) a file in `static` to trigger HMR.
 Save (no need to make any change) scripts/dev-server.js to trigger HMR.
 
 A good starting point for getting to know the project is to have a look at the following files:
-- `src/exports/client.ts`
-- `src/exports/server.ts`
+- `src/client.ts`
+- `src/server.ts`
 - `scripts/dev-server.js`
-- `scripts/hmr-server.js`
-- `static/hmr-client.js`
+- `scripts/hmr-server-dev.js`
+- `static/hmr-client-dev.js`
 - `package.json#scripts`
 - `nodemon.*.json`
 
+> While developing, you can use the string `'__ROLLUP_REPLACE_WITH_EMPTY_STRING__'`. This will be replaced with an empty string when building project. Handy for tree shaking (e.g. in if statements).
+
+## Build
+`npm i`
+
+`npm run build`
+
+`npm run start`
+
+Open localhost:9000/index-prod.html in your browser.
+
 ## Todo
 - Keep import paths in readme updated.
-- `npm run build`
-- Remove console.log's.
 - `npm run publish`
 
 Done:
 - nodemon: which scripts should restart when which files change?
 ## Dont do:
 - When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.
+- `npm run build`
+- Remove console.log's.
+- TODOs in code.

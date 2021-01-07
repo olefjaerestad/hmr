@@ -1,4 +1,4 @@
-import { Client } from '../dist/exports/client.js';
+import { Client } from '../build/client.js';
 
 new Client({
   hostname: 'localhost',
@@ -11,4 +11,4 @@ new Client({
   onOpenCallback: (e) => console.log(e),
   onCloseCallback: (e) => console.log(e),
   onErrorCallback: (e) => console.log(e),
-});
+})

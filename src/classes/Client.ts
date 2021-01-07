@@ -18,13 +18,16 @@ export class Client {
     }
 
     const replacedNodesCount = this.replaceNodesByFilename(e.filename);
-    console.log({filename: e.filename, type: e.type, replacedNodesCount});
 
     // Fallback to reload if all else fails.
     if (!replacedNodesCount) {
-      // 1000 is a magic number waiting for dev files to be built. 
-      // TODO: The setTimeout should be removed in final build.
-      setTimeout(() => location.reload(), 1000);
+      if ('__ROLLUP_REPLACE_WITH_EMPTY_STRING__') {
+        // 1000 is a magic number waiting for dev files to be built. 
+        // setTimeout is removed in final build.
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        location.reload();
+      }
     }
   }
   replaceNodesByFilename = replaceNodesByFilename;

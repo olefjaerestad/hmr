@@ -26,8 +26,8 @@
     "websockets"
   ],
   "license": "MIT",
-  "main": "build/exports/server.js",
-  "name": "hmr",
+  "main": "build/server.js",
+  "name": "@olefjaerestad/hmr",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/olefjaerestad/hmr.git"
@@ -37,6 +37,7 @@
     "dev": "rm -rf dist && tsc && concurrently \"tsc -w\" \"npm run hmr:serve\" \"npm run dev:serve\"",
     "dev:serve": "nodemon --config nodemon.devserver.json --es-module-specifier-resolution=node scripts/dev-server.js",
     "hmr:serve": "nodemon --config nodemon.hmrserver.json --es-module-specifier-resolution=node scripts/hmr-server-dev.js",
+    "publish:npm": "npm run build && npm publish --access public",
     "start": "concurrently \"npm run start:hmr:serve\" \"npm run start:serve\"",
     "start:serve": "node --es-module-specifier-resolution=node scripts/dev-server.js",
     "start:hmr:serve": "node --es-module-specifier-resolution=node scripts/hmr-server-prod.js",

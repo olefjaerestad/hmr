@@ -184,12 +184,14 @@ Open localhost:9000/index-prod.html in your browser.
 
 ## Todo
 - Keep import paths in readme updated.
-- `npm run publish`
+- Add tests.
 
-Done:
+# Done:
 - nodemon: which scripts should restart when which files change?
-## Dont do:
-- When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.
 - `npm run build`
 - Remove console.log's.
-- TODOs in code.
+- Inline TODOs.
+- `npm run publish:npm`
+
+## Dont do:
+- When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.

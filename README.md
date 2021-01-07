@@ -13,7 +13,7 @@ Automatic full refresh for:
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:
 
 ```javascript
-import { Server } from '@olefjaerestad/hmr/server.js';
+import { Server } from '@olefjaerestad/hmr';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -32,14 +32,16 @@ new Server({
 
 Run `node hmr-server.js`. This will start watching the given paths for file changes. A good idea would be to use something like [Concurrently](https://www.npmjs.com/package/concurrently) and run this script in parallel with your other dev script(s).
 
+> Note: This package is an ES module, and as such requires either setting `"type": "module"` in your package.json or using an .mjs extension `hmr-server.mjs`.
+
 Add the following somewhere in your client side code:
 
 ```javascript
 /**
  * Note: if not using a bundler or similar, the import path must point to node_modules, e.g.
- * '../node_modules/@olefjaerestad/hmr/exports/client.js'.
+ * '../node_modules/@olefjaerestad/hmr/build/client.js'.
  */
-import { Client } from '@olefjaerestad/hmr/client.js';
+import { Client } from '@olefjaerestad/hmr/build/client.js';
 
 new Client({
   hostname: 'localhost',
@@ -56,6 +58,11 @@ new Client({
 ```
 
 This will connect your browser to the HMR Server, and you'll be notified when any of the watched files change.
+
+> Note, if you're making a separate file with this content, make sure to mark it as a module when including it in your html (`<script type="module">`).
+
+## Requirements
+Browser and Node environments supporting ES modules.
 
 ## General idea
 - To be used while developing.
@@ -129,7 +136,7 @@ Used on file changes if you don't pass an `onMessageCallback` to the Client cons
 Server side function you can use to manually notify all connected clients. This was originally created to allow web servers to notify clients whenever it restarted.
 
 ```javascript
-import { notify } from '@olefjaerestad/hmr/server.js';
+import { notify } from '@olefjaerestad/hmr';
 
 notify({
   hostname: 'localhost', // Must match hostname of Server. Required.
@@ -183,8 +190,7 @@ A good starting point for getting to know the project is to have a look at the f
 Open localhost:9000/index-prod.html in your browser.
 
 ## Todo
-- Keep import paths in readme updated.
-- Add tests.
+- Add unit tests.
 
 # Done:
 - nodemon: which scripts should restart when which files change?
@@ -192,6 +198,7 @@ Open localhost:9000/index-prod.html in your browser.
 - Remove console.log's.
 - Inline TODOs.
 - `npm run publish:npm`
+- Keep import paths in readme updated.
 
 ## Dont do:
 - When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.

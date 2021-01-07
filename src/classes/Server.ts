@@ -14,8 +14,9 @@ interface IConstructorOptions {
 
 export class Server {
   _connectedSockets: {[id: number]: WebSocket} = {};
-  _server: WebSocket.Server;
   _ignoredFileExtensions: string[] = [];
+  _lastChangedFile: {filename?: string, timestamp?: number} = {};
+  _server: WebSocket.Server;
 
   constructor(options: IConstructorOptions) {
     if (!options.port || !options.hostname) {
@@ -54,6 +55,17 @@ export class Server {
   }
 
   handleFileChange(eventType: string, filename: string) {
+    /**
+     * Bugfix for fs.watch often triggering events twice.
+     * Ref https://stackoverflow.com/questions/12978924/fs-watch-fired-twice-when-i-change-the-watched-file 
+     */
+    if (filename === this._lastChangedFile.filename) {
+      const now = Date.now();
+      if (!this._lastChangedFile.timestamp || now - this._lastChangedFile.timestamp < 100) {
+        return;
+      }
+    }
+
     for (let i = 0; i < (this._ignoredFileExtensions || []).length; ++i) {
       if (filename.endsWith(this._ignoredFileExtensions[i])) {
         return;
@@ -65,8 +77,11 @@ export class Server {
       type: 'filechanged',
     }
 
-    for (const socketId in this._connectedSockets) {
-      this._connectedSockets[socketId].send(JSON.stringify(event));
+    this.notifyConnectedClients(event);
+
+    this._lastChangedFile = {
+      filename,
+      timestamp: Date.now(),
     }
   }
 

@@ -18,7 +18,7 @@ export class Client {
     }
 
     const replacedNodesCount = this.replaceNodesByFilename(e.filename);
-    console.log({replacedNodesCount});
+    console.log({filename: e.filename, type: e.type, replacedNodesCount});
 
     // Fallback to reload if all else fails.
     if (!replacedNodesCount) {

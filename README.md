@@ -90,6 +90,9 @@ new Server({
 #### Server._ignoredFileExtensions
 `string[]`
 
+#### Server._lastChangedFile
+`{filename?: string, timestamp?: number}`
+
 #### Server._server
 `WebSocket.Server`
 
@@ -171,6 +174,7 @@ A good starting point for getting to know the project is to have a look at the f
 ## Todo
 - Keep import paths in readme updated.
 - `npm run build`
+- Remove console.log's.
 - `npm run publish`
 
 Done:

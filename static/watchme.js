@@ -6,3 +6,9 @@
  * TODO: Why do i get saved twice when saving? Some VS Code thingy? Doesnt seem to happen to compiled files.
  */
 console.log('watchme.js', 1);
+const x = 'helloworld';
+const myObj = {};
+
+for (let i = 0; i < 999999; ++i) {
+  myObj[i] = x;
+}

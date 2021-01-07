@@ -4,28 +4,17 @@ type THmrElementType = HTMLLinkElement
 | HTMLEmbedElement
 | HTMLIFrameElement;
 
-type TDataType = 'css' | 'svg' | 'img';
+type TDataType = 'css' | 'svg' | 'img' | 'js';
 
 /**
  * Replace nodes which reference filename (e.g. CSS <link>s).
  * Return number of replaced nodes.
  * 
- * Don't attempt to replace scripts.
- * Reason 1: 
+ * Don't attempt to replace non-module scripts.
+ * Reason:
  * Potential source of memory leaks,
  * removed scripts will still be in memory.
  * Which in turn will lead to 'Cannot redeclare variable' errors.
- * Reason 2:
- * ESM modules are only ran/evaluated once 
- * even when imported multiple times. 
- * Currently seems to be no way of changing this behaviour,
- * we probably wouldn't want to change it anyway.
- * Further reading:
- * https://stackoverflow.com/questions/53178938/dynamically-loading-a-module-that-is-not-in-a-script-tag-with-type-module
- * https://jakearchibald.com/2017/es-modules-in-browsers/
- * https://hacks.mozilla.org/2018/03/es-modules-a-cartoon-deep-dive/
- * https://dmitripavlutin.com/javascript-module-import-twice/
- * https://tc39.es/ecma262/#sec-abstract-module-records
  */
 export function replaceNodesByFilename(filename: string): void | number {
   if (!filename) {
@@ -41,7 +30,6 @@ export function replaceNodesByFilename(filename: string): void | number {
 
   let replacedNodesCount = 0;
 
-  // TODO: Replace with querySelector()?
   const elements = document.querySelectorAll(selector);
   elements.forEach((element: THmrElementType) => {
     if (!elementReferencesCurrentOrigin(element)) {
@@ -51,15 +39,15 @@ export function replaceNodesByFilename(filename: string): void | number {
     const newElement = cloneElement(element);
 
     /**
-     * Add timestamp to cache bust images.
+     * Add timestamp to bust cache.
      * Ref https://stackoverflow.com/questions/1077041/refresh-image-with-a-new-one-at-the-same-url.
      */
     const cachedAttributes = ['src', 'data'];
     cachedAttributes.forEach((attribute: string) => {
-      if (element.hasAttribute(attribute)) {
+      if (newElement.hasAttribute(attribute)) {
         newElement.setAttribute(
           attribute, 
-          addTimestampParam(element.getAttribute(attribute))
+          addTimestampParam(newElement.getAttribute(attribute))
         );
       }
     });
@@ -79,7 +67,7 @@ function addTimestampParam(string: string) {
 }
 
 /**
- * We're using this to avoid replacing scripts not from our domain/origin.
+ * We're using this to avoid replacing nodes referencing files not from our domain/origin.
  * Ideally we would have the full URL of the changed file available, so we dont accidentally 
  * replace the wrong node in case of multiple nodes referencing files with the same filename, 
  * at different paths (e.g. /dist/style.css and ./vendor/somevendor/style.css). We don't tho.
@@ -103,6 +91,12 @@ function elementReferencesCurrentOrigin(element: THmrElementType): boolean {
 
 function getDataTypeFromFilename(filename: string): TDataType {
   const filenameLowerCase = filename.toLowerCase();
+
+  const isJs = filenameLowerCase.endsWith('.js');
+  if (isJs) {
+    return 'js';
+  }
+
   const isCss = filenameLowerCase.endsWith('.css');
   if (isCss) {
     return 'css';
@@ -129,7 +123,9 @@ function getDataTypeFromFilename(filename: string): TDataType {
 }
 
 function getSelectorFromFilenameAndDataType(filename: string, dataType: TDataType): string {
-  if (dataType === 'css') {
+  if (dataType === 'js') {
+    return `script[src*="${filename}"][type="module"]`;
+  } else if (dataType === 'css') {
     return `link[href*="${filename}"]`;
   } else if (dataType === 'svg') {
     return `

@@ -4,9 +4,10 @@ Hot Module Reloading server and client side scripts.
 HMR for:
 - CSS
 - Images
+- JS modules (`script[type="module"]`)
 
 Automatic full refresh for:
-- JS
+- Non-module JS.
 
 ## How to use
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:

@@ -201,7 +201,7 @@ A good starting point for getting to know the project is to have a look at the f
 Open localhost:9000/index-prod.html in your browser.
 
 ## Todo
-- Inline TODOs.
+- When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. Either this must be fixed (how?), or we must abandon HMR for scripts.
 - Add unit tests.
 
 # Done:
@@ -210,6 +210,7 @@ Open localhost:9000/index-prod.html in your browser.
 - Remove console.log's.
 - `npm run publish:npm`
 - Keep import paths in readme updated.
+- Inline TODOs.
 
 ## Dont do:
 - When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.

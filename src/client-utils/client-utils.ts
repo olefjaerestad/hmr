@@ -10,18 +10,27 @@ type TDataType = 'css' | 'svg' | 'img' | 'js';
  * Replace nodes which reference filename (e.g. CSS <link>s).
  * Return number of replaced nodes.
  * 
- * Don't attempt to replace non-module scripts.
+ * Even with `includeJs`, don't attempt to replace non-module scripts.
  * Reason:
  * Potential source of memory leaks,
  * removed scripts will still be in memory.
  * Which in turn will lead to 'Cannot redeclare variable' errors.
  */
-export function replaceNodesByFilename(filename: string, verbose: boolean): void | number {
+export function replaceNodesByFilename({includeJs = false, filename, verbose = false}: {
+    includeJs?: boolean; 
+    filename: string; 
+    verbose?: boolean;
+}): void | number {
   if (!filename) {
     return;
   }
   
   const dataType = getDataTypeFromFilename(filename);
+
+  if (!includeJs && dataType === 'js') {
+    return;
+  }
+
   const selector = getSelectorFromFilenameAndDataType(filename, dataType);
 
   if (!selector) {
@@ -54,6 +63,14 @@ export function replaceNodesByFilename(filename: string, verbose: boolean): void
 
     element.parentElement.replaceChild(newElement, element);
     ++replacedNodesCount;
+
+    /**
+     * Avoid memory leaks.
+     * Ref https://neil.fraser.name/news/2009/07/27/
+     */
+    for (const prop in element) {
+      delete element[prop];
+    }
 
     if (verbose) {
       console.info(`[HMR] Refreshed ${filename}`);

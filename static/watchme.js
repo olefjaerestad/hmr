@@ -11,3 +11,5 @@ const myObj = {};
 for (let i = 0; i < 999999; ++i) {
   myObj[i] = x;
 }
+
+document.querySelector('h1').addEventListener('click', (e) => console.log(e));

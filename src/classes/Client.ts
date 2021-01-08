@@ -9,6 +9,7 @@ interface IConstructorOptions {
   onOpenCallback?: (e: Event) => any,
   port: number;
   verbose?: boolean;
+  doJsHmr?: boolean;
 }
 
 export class Client {
@@ -20,7 +21,11 @@ export class Client {
       return location.reload();
     }
 
-    const replacedNodesCount = this.replaceNodesByFilename(e.filename, this._verbose);
+    const replacedNodesCount = this.replaceNodesByFilename({
+      filename: e.filename,
+      includeJs: this._doJsHmr,
+      verbose: this._verbose,
+    });
 
     // Fallback to reload if all else fails.
     if (!replacedNodesCount) {
@@ -41,11 +46,13 @@ export class Client {
       }
     }
   }
+  _doJsHmr: boolean;
   _socket: WebSocket;
   _verbose: boolean;
   replaceNodesByFilename = replaceNodesByFilename;
   
   constructor(options: IConstructorOptions) {
+    this._doJsHmr = options.doJsHmr;
     this._socket = new WebSocket(`ws://${options.hostname}:${options.port}`);
     this._verbose = options.verbose;
 

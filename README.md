@@ -1,14 +1,18 @@
 # hmr
-Hot Module Reloading server and client side scripts.
+Hot Module Reloading server and client side scripts. All you need to get up and running with HMR in your project.
 
 HMR for:
 - CSS
 - Images
-- JS modules (`script[type="module"]`)
 
 Automatic full refresh for:
 - HTML
-- Non-module JS
+- JS, with experimental HMR support for JS modules (`script[type="module"]`).
+
+## Requirements
+Browser and Node environments supporting the following: 
+- ES modules
+- Classes
 
 ## How to use
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:
@@ -50,7 +54,7 @@ new Client({
   onMessageCallback: (e, client) => {
     console.log('Client.onMessageCallback()');
     console.log(e);
-    client.replaceNodesByFilename(e.filename);
+    client.replaceNodesByFilename({filename: e.filename});
   },
   onOpenCallback: (e) => console.log(e),
   onCloseCallback: (e) => console.log(e),
@@ -61,11 +65,6 @@ new Client({
 This will connect your browser to the HMR Server, and you'll be notified when any of the watched files change.
 
 > Note, if you're making a separate file with this content, make sure to mark it as a module when including it in your html (`<script type="module">`).
-
-## Requirements
-Browser and Node environments supporting the following: 
-- ES modules
-- Classes
 
 ## General idea
 - To be used while developing.
@@ -118,12 +117,18 @@ new Client({
   hostname: 'localhost', // Must match hostname of Server. Required.
   port: 9001, // Must match port of Server. Required.
   onMessageCallback: (e: IFileChangedEvent, client: Client) => { // Run callback on file changes. Optional. If not passed, fallbacks to a default (and hopefully reasonable) behaviour.
-    client.replaceNodesByFilename(e.filename); // client refers to the newly created instance.
+    // client refers to the newly created instance:
+    client.replaceNodesByFilename({ 
+      filename: e.filename,
+      includeJs: client._doJsHmr,
+      verbose: client._verbose,
+    });
   },
   onOpenCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection to Server. Optional.
   onCloseCallback: (e: CloseEvent, client: Client) => console.log(e), // Run callback on disconnection from Server. Optional.
   onErrorCallback: (e: Event, client: Client) => console.log(e), // Run callback on connection error. Optional.
   verbose: true, // Optional. Outputs connection/file events to console. Useful for debugging. Default: false.
+  doJsHmr: true, // Do HMR instead of page refresh for changes to javascript modules. This is experimental and quite buggy. Use at your own risk. Default: false.
 });
 ```
 
@@ -132,14 +137,17 @@ Used on file changes if you don't pass an `onMessageCallback` to the Client cons
 
 `(e: IFileChangedEvent) => void`
 
+#### Client._doJsHmr
+`boolean`
+
 #### Client._socket
 `WebSocket`
 
 #### Client._verbose
 `boolean`
 
-#### Client.replaceNodesByFilename(filename: string): number
-Replace nodes which reference filename (e.g. CSS <link>s). Return number of replaced nodes. Does not replace script tags that don't have `type=module`.
+#### Client.replaceNodesByFilename({filename: string, includeJs?: boolean = false, verbose?: boolean = false}): number
+Replace nodes which reference filename (e.g. CSS <link>s). Return number of replaced nodes.
 
 ### Utility functions
 
@@ -201,7 +209,6 @@ A good starting point for getting to know the project is to have a look at the f
 Open localhost:9000/index-prod.html in your browser.
 
 ## Todo
-- When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. Either this must be fixed (how?), or we must abandon HMR for scripts.
 - Add unit tests.
 
 # Done:
@@ -214,3 +221,4 @@ Open localhost:9000/index-prod.html in your browser.
 
 ## Dont do:
 - When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.
+- When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. Either this must be fixed (how?), or we must abandon HMR for scripts. Update: Added a doJsHmr option in Client constructor to opt-in.

@@ -35,7 +35,7 @@ Run `node hmr-server.js`. This will start watching the given paths recursively f
 
 > Note: This package is an ES module, and as such requires either setting `"type": "module"` in your package.json or using an .mjs extension `hmr-server.mjs`.
 
-Add the following somewhere in your client side code:
+Add the following somewhere in your client side code (e.g. create a hmr-client.js and include it in your markup):
 
 ```javascript
 /**
@@ -201,13 +201,13 @@ A good starting point for getting to know the project is to have a look at the f
 Open localhost:9000/index-prod.html in your browser.
 
 ## Todo
+- Inline TODOs.
 - Add unit tests.
 
 # Done:
 - nodemon: which scripts should restart when which files change?
 - `npm run build`
 - Remove console.log's.
-- Inline TODOs.
 - `npm run publish:npm`
 - Keep import paths in readme updated.
 

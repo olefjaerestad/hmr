@@ -88,9 +88,11 @@ function elementReferencesCurrentOrigin(element: THmrElementType): boolean {
     }
   }
 
-  return attributeValue.startsWith('.') 
-  || attributeValue.startsWith('/')
-  || attributeValue.includes(location.hostname);
+  return attributeValue.includes(location.hostname)
+  || (
+    !attributeValue.startsWith('http://') &&
+    !attributeValue.startsWith('https://')
+    );
 }
 
 function getDataTypeFromFilename(filename: string): TDataType {
@@ -128,18 +130,31 @@ function getDataTypeFromFilename(filename: string): TDataType {
 
 function getSelectorFromFilenameAndDataType(filename: string, dataType: TDataType): string {
   if (dataType === 'js') {
-    return `script[src*="${filename}"][type="module"]`;
+    return `
+      script[src^="${filename}"][type="module"],
+      script[src*="/${filename}"][type="module"]
+    `;
   } else if (dataType === 'css') {
-    return `link[href*="${filename}"]`;
+    return `
+      link[href^="${filename}"],
+      link[href*="/${filename}"]
+    `;
   } else if (dataType === 'svg') {
     return `
-      img[src*="${filename}"], 
-      object[data*="${filename}"], 
-      embed[src*="${filename}"], 
-      iframe[src*="${filename}"]
+      img[src^="${filename}"], 
+      img[src*="/${filename}"], 
+      object[data^="${filename}"], 
+      object[data*="/${filename}"], 
+      embed[src^="${filename}"], 
+      embed[src*="/${filename}"], 
+      iframe[src^="${filename}"],
+      iframe[src*="/${filename}"]
     `;
   } else if (dataType === 'img') {
-    return `img[src*="${filename}"]`;
+    return `
+      img[src^="${filename}"],
+      img[src*="/${filename}"]
+    `;
   }
 }
 

@@ -15,6 +15,8 @@ Browser and Node environments supporting the following:
 - Classes
 
 ## How to use
+`npm i @olefjaerestad/hmr`
+
 Create a hmr-server.js and add the following. Feel free to tweak the `Server` parameters as you see fit:
 
 ```javascript
@@ -177,7 +179,9 @@ interface IFileChangedEvent {
 }
 ```
 
-## Dev
+## Dev (contributing to the project)
+Branch out from master.
+
 `npm i`
 
 `npm run dev`
@@ -196,6 +200,8 @@ A good starting point for getting to know the project is to have a look at the f
 - `static/hmr-client-dev.js`
 - `package.json#scripts`
 - `nodemon.*.json`
+
+When you're done, create a pull request from your branch to master.
 
 > While developing, you can use the string `'__ROLLUP_REPLACE_WITH_EMPTY_STRING__'`. This will be replaced with an empty string when building project. Handy for tree shaking (e.g. in if statements).
 

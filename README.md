@@ -209,16 +209,8 @@ A good starting point for getting to know the project is to have a look at the f
 Open localhost:9000/index-prod.html in your browser.
 
 ## Todo
-- Add unit tests.
+- Add (unit) tests.
 
-# Done:
-- nodemon: which scripts should restart when which files change?
-- `npm run build`
-- Remove console.log's.
-- `npm run publish:npm`
-- Keep import paths in readme updated.
-- Inline TODOs.
-
-## Dont do:
-- When used in external project, make available a `hmr` command. Update: Taking a JS API approach instead.
-- When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. Either this must be fixed (how?), or we must abandon HMR for scripts. Update: Added a doJsHmr option in Client constructor to opt-in.
+## FAQ
+### Why opt-in HMR for JS?
+When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. This happens because scripts stay in memory even after they've been removed from DOM. This could also lead to huge memory leaks. This would be a less than ideal default. By opting in to JS HMR, you risk experiencing both these issues.

@@ -11,8 +11,8 @@ Automatic full refresh for:
 
 ## Requirements
 Browser and Node environments supporting the following: 
-- ES modules
-- Classes
+- [ES modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+- [Classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
 
 ## How to use
 `npm i @olefjaerestad/hmr`
@@ -219,4 +219,4 @@ Open localhost:9000/index-prod.html in your browser.
 
 ## FAQ
 ### Why opt-in HMR for JS?
-When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. This happens because scripts stay in memory even after they've been removed from DOM. This could also lead to huge memory leaks. This would be a less than ideal default. By opting in to JS HMR, you risk experiencing both these issues.
+When replacing scripts, if the replaced script contains `addEventListener`, that event listener will fire as many times as the script has been replaced. This happens because scripts stay in memory even after they've been removed from DOM. This could also lead to huge memory leaks. This would be a less than ideal default. By opting in to JS HMR, you risk experiencing issues like these.

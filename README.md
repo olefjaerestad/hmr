@@ -1,11 +1,11 @@
 # hmr
 Hot Module Reloading server and client side scripts. All you need to get up and running with HMR in your project.
 
-HMR for:
+Hot module reload (automatically reload code without reloading page) for:
 - CSS
 - Images
 
-Automatic full refresh for:
+Hot reloading (automatic full page reload) for:
 - HTML
 - JS, with experimental HMR support for JS modules (`script[type="module"]`).
 

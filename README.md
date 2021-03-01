@@ -72,7 +72,7 @@ This will connect your browser to the HMR Server, and you'll be notified when an
 - To be used while developing.
 - Keeps a websocket server running at all times.
 - The websocket server watches for file changes and notifies connected clients.
-- The clients decide themselves what they want to do when files change.
+- The clients decide themselves what they want to do when files change (or use defaults).
 - Expose a JS API.
 - No CLI API.
 
@@ -96,7 +96,7 @@ new Server({
 });
 ```
 
-#### Server.addEventListener
+#### Server.addEventListener(eventName: string: callback: (event) => any): void
 Run a callback on certain events. Useful e.g. if you need the filename of the changed file server side.
 
 ```javascript
@@ -107,10 +107,11 @@ function changeCallback(event) {
 hmrServer.addEventListener('change', changeCallback);
 ```
 
-Supported events: `change`.
+Supported events: 
+- `change`: When a file change is detected.
 
-#### Server.emit
-Emit an event, which triggers callbacks registered with `addEventListener()`.
+#### Server.emit(eventName: string, event: {[key: string]: any}): boolean
+Emit an event, which triggers callbacks registered with `addEventListener()`. Returns `false` if no callbacks have been registered, `true` otherwise. If callbacks have been registered, `true` will be returned _after_ the callbacks have been run. This is used internally, but feel free to use it however you like.
 
 ```javascript
 const hmrServer = new Server({...args});
@@ -121,8 +122,8 @@ hmrServer.emit('change', {
 });
 ```
 
-#### Server.removeEventListener
-Remove a callback registered with `addEventListener()`.
+#### Server.removeEventListener(eventName: string: callback: (event) => any): boolean
+Remove a callback registered with `addEventListener()`. Returns whether the callback could be removed or not.
 
 ```javascript
 const hmrServer = new Server({...args});
@@ -171,7 +172,7 @@ new Client({
 });
 ```
 
-#### Client._defaultOnMessageCallback: 
+#### Client._defaultOnMessageCallback(e: IFileChangedEvent): void:
 Used on file changes if you don't pass an `onMessageCallback` to the Client constructor.
 
 `(e: IFileChangedEvent) => void`
@@ -186,7 +187,7 @@ Used on file changes if you don't pass an `onMessageCallback` to the Client cons
 `boolean`
 
 #### Client.replaceNodesByFilename({filename: string, includeJs?: boolean = false, verbose?: boolean = false}): number
-Replace nodes which reference filename (e.g. CSS <link>s). Return number of replaced nodes.
+Replace nodes which reference filename (e.g. CSS `<link>`s). Return number of replaced nodes.
 
 ### Utility functions
 
@@ -206,6 +207,17 @@ notify({
 ```
 
 ### Typescript
+```typescript
+import {
+  IChangeEvent,
+  IFileChangedEvent,
+  TChangeCallback,
+  TEventName,
+} from '@olefjaerestad/hmr/types/types';
+```
+
+> `IFileChangedEvent` is explained below, see [the source code](https://github.com/olefjaerestad/hmr/tree/main/src/types) for more details.
+
 #### IFileChangedEvent
 Event emitted when files are changed.
 

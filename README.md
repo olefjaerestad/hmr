@@ -28,7 +28,7 @@ new Server({
   hostname: 'localhost',
   port: 9001,
   watch: {
-    path: [
+    paths: [
       join(fileURLToPath(import.meta.url), '../../dist'),
       join(fileURLToPath(import.meta.url), '../../../somefolder'),
       join(fileURLToPath(import.meta.url), '/../anotherfolder'),
@@ -81,23 +81,24 @@ This will connect your browser to the HMR Server, and you'll be notified when an
 ### Server
 ```javascript
 new Server({
-  hostname: 'localhost', // Required.
-  port: 9001, // Required.
+  hostname: 'localhost', // string. Required.
+  port: 9001, // number. Required.
   watch: { // Required.
     ignoredFileExtensions // string[]. Optional. Example: ['.d.ts', '.tsbuildinfo']
-    path: [ // string or string[]. Required.
+    notifyClientsOnFileChange: true, // boolean. Optional. Notify connected clients when a file changes. Default: true.
+    paths: [ // string or string[]. Required.
       join(fileURLToPath(import.meta.url), '../../dist'),
       join(fileURLToPath(import.meta.url), '../../../somefolder'),
       join(fileURLToPath(import.meta.url), '/../anotherfolder'),
       join(fileURLToPath(import.meta.url), './../yetanotherfolder/file.js'),
     ],
-    verbose: true, // Optional. Outputs file events to console. Useful for debugging. Default: false.
+    verbose: false, // boolean. Optional. Outputs file events to console. Useful for debugging. Default: false.
   }
 });
 ```
 
-#### Server.addEventListener(eventName: string: callback: (event) => any): void
-Run a callback on certain events. Useful e.g. if you need the filename of the changed file server side.
+#### Server.addEventListener(eventName: string: callback: (event) => any): boolean
+Run a callback on certain events. Useful e.g. if you need the filename of the changed file server side. Returns whether the callback could be added or not (a given callback can only be added once pr. `eventName`).
 
 ```javascript
 const hmrServer = new Server({...args});
@@ -122,6 +123,9 @@ hmrServer.emit('change', {
 });
 ```
 
+#### Server.notifyConnectedClients(event: IFileChangedEvent): void
+Notify connected clients about a file change.
+
 #### Server.removeEventListener(eventName: string: callback: (event) => any): boolean
 Remove a callback registered with `addEventListener()`. Returns whether the callback could be removed or not.
 
@@ -142,6 +146,9 @@ hmrServer.removeEventListener('change', changeCallback);
 
 #### Server._lastChangedFile
 `{filename?: string, timestamp?: number}`
+
+#### Server._notifyClientsOnFileChange
+`boolean`
 
 #### Server._server
 `WebSocket.Server`

@@ -6,7 +6,7 @@ new Server({
   hostname: 'localhost',
   port: 9001,
   watch: {
-    path: [
+    paths: [
       // join(fileURLToPath(import.meta.url), '../../dist/classes'),
       // join(fileURLToPath(import.meta.url), '../../dist/exports'),
       // join(fileURLToPath(import.meta.url), '../../dist/client-utils'),

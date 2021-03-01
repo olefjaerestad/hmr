@@ -1,7 +1,7 @@
 import { IEventNameToEventAndCallback, TChangeCallback, TEventName } from '../types/types';
 
 type TEvents = {
-  // Want to use this, but it results in errors:
+  // Want to use this, but it results in errors with more than one callback type:
   // [eventName in TEventName]?: IEventNameToEventAndCallback[eventName][1][];
   [eventName in keyof IEventNameToEventAndCallback]?: (TChangeCallback)[];
 }
@@ -9,16 +9,28 @@ type TEvents = {
 export class EventsHandler {
   _events: TEvents = {};
 
-  addEventListener<T extends TEventName>(eventName: T, callback: IEventNameToEventAndCallback[T][1]) {
+  addEventListener<T extends TEventName>(eventName: T, callback: IEventNameToEventAndCallback[T][1]): boolean {
+    if (!eventName || !callback) {
+      return false;
+    }
+
     if (!this._events[eventName]) {
       this._events[eventName] = [];
     }
+
+    const index = this._events[eventName].indexOf(callback);
+
+    if (index !== -1) {
+      return false;
+    }
     
     this._events[eventName].push(callback);
+
+    return true;
   }
 
   emit<T extends TEventName>(eventName: T, event: IEventNameToEventAndCallback[T][0]): boolean {
-    if (!this._events[eventName]) {
+    if (!this._events[eventName] || !event) {
       return false;
     }
 
@@ -31,7 +43,7 @@ export class EventsHandler {
   }
 
   removeEventListener<T extends TEventName>(eventName: T, callback: IEventNameToEventAndCallback[T][1]): boolean {
-    if (!this._events[eventName]) {
+    if (!this._events[eventName] || !callback) {
       return false;
     }
     

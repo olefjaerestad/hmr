@@ -10,7 +10,8 @@ interface IConstructorOptions {
   port: number;
   watch: {
     ignoredFileExtensions?: string[];
-    path: string | string[];
+    notifyClientsOnFileChange?: boolean;
+    paths: string | string[];
     verbose?: boolean;
   }
 }
@@ -19,6 +20,7 @@ export class Server extends EventsHandler {
   _connectedSockets: {[id: number]: WebSocket} = {};
   _ignoredFileExtensions: string[] = [];
   _lastChangedFile: {filename?: string, timestamp?: number} = {};
+  _notifyClientsOnFileChange: boolean;
   _server: WebSocket.Server;
   _verbose: boolean;
 
@@ -33,6 +35,9 @@ export class Server extends EventsHandler {
 
     this._ignoredFileExtensions = options.watch.ignoredFileExtensions;
     this._verbose = options.watch.verbose;
+    this._notifyClientsOnFileChange = options.watch.notifyClientsOnFileChange !== undefined 
+      ? options.watch.notifyClientsOnFileChange 
+      : true;
 
     this._server = new WebSocket.Server({
       port: options.port,
@@ -45,7 +50,7 @@ export class Server extends EventsHandler {
     this.handleFileChange = this.handleFileChange.bind(this);
 
     this.registerConnectedClients();
-    this.watchFiles(options.watch.path);
+    this.watchFiles(options.watch.paths);
   }
 
   deregisterClientOnDisconnect(socket: WebSocket, socketId: number) {
@@ -93,7 +98,7 @@ export class Server extends EventsHandler {
       value: event,
     });
 
-    this.notifyConnectedClients(event);
+    this._notifyClientsOnFileChange && this.notifyConnectedClients(event);
 
     this._lastChangedFile = {
       filename,
@@ -125,10 +130,10 @@ export class Server extends EventsHandler {
     });
   }
 
-  watchFiles(path: string | string[]) {
+  watchFiles(paths: string | string[]) {
     // const paths = typeof path === 'string' ? [path] : path;
     
-    const watcher = chokidar.watch(path);
+    const watcher = chokidar.watch(paths);
     watcher.on('all', this.handleFileChange);
   }
 }

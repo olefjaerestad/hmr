@@ -84,7 +84,7 @@ new Server({
   hostname: 'localhost', // string. Required.
   port: 9001, // number. Required.
   watch: { // Required.
-    ignoredFileExtensions // string[]. Optional. Example: ['.d.ts', '.tsbuildinfo']
+    ignoredFileExtensions, // string[]. Optional. Example: ['.d.ts', '.tsbuildinfo']
     notifyClientsOnFileChange: true, // boolean. Optional. Notify connected clients when a file changes. Default: true.
     paths: [ // string or string[]. Required.
       join(fileURLToPath(import.meta.url), '../../dist'),

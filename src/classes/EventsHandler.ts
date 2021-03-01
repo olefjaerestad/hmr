@@ -44,5 +44,9 @@ export class EventsHandler {
     
     const index = this._events[eventName].indexOf(callback);
     (index !== -1) && this._events[eventName].splice(index, 1);
+
+    if (this._events[eventName].length === 0) {
+      delete this._events[eventName];
+    }
   }
 }

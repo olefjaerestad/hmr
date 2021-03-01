@@ -213,7 +213,7 @@ import {
   IFileChangedEvent,
   TChangeCallback,
   TEventName,
-} from '@olefjaerestad/hmr/types/types';
+} from '@olefjaerestad/hmr/build/types/types';
 ```
 
 > `IFileChangedEvent` is explained below, see [the source code](https://github.com/olefjaerestad/hmr/tree/main/src/types) for more details.

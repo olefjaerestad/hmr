@@ -19,7 +19,7 @@ app.listen(port, () => {
     hostname: 'localhost',
     port: 9001,
     event: {
-      type: 'serverrestart',
+      type: 'restart',
     }
   });
 });

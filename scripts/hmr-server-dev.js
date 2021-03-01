@@ -2,7 +2,7 @@ import { Server } from '../dist/server';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 
-new Server({
+const hmrServer = new Server({
   hostname: 'localhost',
   port: 9001,
   watch: {

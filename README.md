@@ -96,6 +96,43 @@ new Server({
 });
 ```
 
+#### Server.addEventListener
+Run a callback on certain events. Useful e.g. if you need the filename of the changed file server side.
+
+```javascript
+const hmrServer = new Server({...args});
+function changeCallback(event) {
+  console.log(event);
+};
+hmrServer.addEventListener('change', changeCallback);
+```
+
+Supported events: `change`.
+
+#### Server.emit
+Emit an event, which triggers callbacks registered with `addEventListener()`.
+
+```javascript
+const hmrServer = new Server({...args});
+hmrServer.emit('change', {
+  value: {
+    foo: 'bar'
+  },
+});
+```
+
+#### Server.removeEventListener
+Remove a callback registered with `addEventListener()`.
+
+```javascript
+const hmrServer = new Server({...args});
+function changeCallback(event) {
+  console.log(event);
+};
+hmrServer.addEventListener('change', changeCallback);
+hmrServer.removeEventListener('change', changeCallback);
+```
+
 #### Server._connectedSockets
 `{[id: number]: WebSocket}`
 
@@ -163,7 +200,7 @@ notify({
   hostname: 'localhost', // Must match hostname of Server. Required.
   port: 9001, // Must match port of Server. Required.
   event: { // IFileChangedEvent. Required.
-    type: 'serverrestart',
+    type: 'restart',
   }
 });
 ```
@@ -175,7 +212,7 @@ Event emitted when files are changed.
 ```javascript
 interface IFileChangedEvent {
   filename?: string;
-  type: 'filechanged' | 'serverrestart';
+  type: 'add' | 'addDir' | 'change' | 'restart' | 'unlink' | 'unlinkDir';
 }
 ```
 

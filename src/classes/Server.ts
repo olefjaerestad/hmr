@@ -1,5 +1,6 @@
 import chokidar from 'chokidar';
 import WebSocket from 'ws';
+import { EventsHandler } from './EventsHandler';
 import { IFileChangedEvent, TFsEventName } from "../types/types";
 import { IncomingMessage } from 'http';
 import { Stats } from 'fs';
@@ -14,7 +15,7 @@ interface IConstructorOptions {
   }
 }
 
-export class Server {
+export class Server extends EventsHandler {
   _connectedSockets: {[id: number]: WebSocket} = {};
   _ignoredFileExtensions: string[] = [];
   _lastChangedFile: {filename?: string, timestamp?: number} = {};
@@ -22,6 +23,8 @@ export class Server {
   _verbose: boolean;
 
   constructor(options: IConstructorOptions) {
+    super();
+    
     if (!options.port || !options.hostname) {
       throw new Error(
         `The Server constructor requires port (received ${options.port}) and hostname (received ${options.hostname})`
@@ -85,6 +88,10 @@ export class Server {
       filename,
       type: eventName,
     }
+
+    this.emit('change', {
+      value: event,
+    });
 
     this.notifyConnectedClients(event);
 

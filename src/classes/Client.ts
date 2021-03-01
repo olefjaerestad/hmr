@@ -14,9 +14,9 @@ interface IConstructorOptions {
 
 export class Client {
   _defaultOnMessageCallback(e: IFileChangedEvent) {
-    if (e.type === 'serverrestart') {
+    if (e.type === 'restart') {
       if (this._verbose) {
-        console.info('[HMR] Reloading due to server restart');
+        console.info('[HMR] Reloading due to restart');
       }
       return location.reload();
     }

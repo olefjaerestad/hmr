@@ -68,7 +68,7 @@ export class Server extends EventsHandler {
 
   
   handleFileChange(eventName: TFsEventName, filepath: string, stats: Stats) {
-    const filename = filepath.split('/').reverse()[0];
+    const filename = filepath.substring(filepath.lastIndexOf('/') + 1);
 
     /**
      * Bugfix for fs.watch often triggering events twice.
@@ -91,6 +91,7 @@ export class Server extends EventsHandler {
 
     const event: IFileChangedEvent = {
       filename,
+      filepath: filepath.substring(0, filepath.lastIndexOf('/')),
       type: eventName,
     }
 

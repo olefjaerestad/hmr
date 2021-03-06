@@ -231,6 +231,7 @@ Event emitted when files are changed.
 ```javascript
 interface IFileChangedEvent {
   filename?: string;
+  filepath?: string;
   type: 'add' | 'addDir' | 'change' | 'restart' | 'unlink' | 'unlinkDir';
 }
 ```

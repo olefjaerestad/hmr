@@ -1,6 +1,7 @@
 export type TFsEventName = "add" | "addDir" | "change" | "unlink" | "unlinkDir";
 export interface IFileChangedEvent {
   filename?: string;
+  filepath?: string;
   type: TFsEventName | 'restart';
 }
 export type TEventName = keyof IEventNameToEventAndCallback;

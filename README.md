@@ -151,7 +151,7 @@ hmrServer.removeEventListener('change', changeCallback);
 `boolean`
 
 #### Server._server
-`WebSocket.Server`
+`WebSocketServer`
 
 [https://github.com/websockets/ws#simple-server](https://github.com/websockets/ws#simple-server)
 

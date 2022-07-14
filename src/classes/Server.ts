@@ -1,5 +1,5 @@
 import chokidar from 'chokidar';
-import WebSocket from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 import { EventsHandler } from './EventsHandler';
 import { IFileChangedEvent, TFsEventName } from "../types/types";
 import { IncomingMessage } from 'http';
@@ -21,7 +21,7 @@ export class Server extends EventsHandler {
   _ignoredFileExtensions: string[] = [];
   _lastChangedFile: {filename?: string, timestamp?: number} = {};
   _notifyClientsOnFileChange: boolean;
-  _server: WebSocket.Server;
+  _server: WebSocketServer;
   _verbose: boolean;
 
   constructor(options: IConstructorOptions) {
@@ -39,9 +39,9 @@ export class Server extends EventsHandler {
       ? options.watch.notifyClientsOnFileChange 
       : true;
 
-    this._server = new WebSocket.Server({
+    this._server = new WebSocketServer({
       port: options.port,
-    });
+    })
 
     this._server.on('listening', () => {
       console.info(`[HMR] Websocket server listening on ws://${options.hostname}:${this._server.options.port}`);
